@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STPM Chemistry Sem 1 (Topics 1-3) Quiz</title>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- KaTeX for LaTeX Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a, #1e1b4b, #311042);
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --text-main: #1e293b;
+            --accent-purple: #7c3aed;
+            --accent-blue: #2563eb;
+            --accent-cyan: #06b6d4;
+            --correct-bg: #f0fdf4;
+            --correct-border: #22c55e;
+            --incorrect-bg: #fef2f2;
+            --incorrect-border: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 25px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            height: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            transition: width 0.3s ease;
+        }
+
+        .tracker-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+
+        .question-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border-left: 6px solid var(--accent-purple);
+            border-top: 1px solid #f1f5f9;
+            border-right: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .question-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .option-label:hover {
+            border-color: var(--accent-blue);
+            background: #f8fafc;
+        }
+
+        .option-label input[type="radio"] {
+            margin-right: 14px;
+            accent-color: var(--accent-purple);
+            transform: scale(1.2);
+        }
+
+        .solution-box {
+            display: none;
+            margin-top: 18px;
+            padding: 16px;
+            background: #f8fafc;
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        /* Navigation Buttons */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.3);
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn:disabled {
+            background: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #475569;
+            box-shadow: 0 10px 20px rgba(100, 116, 139, 0.2);
+        }
+
+        .btn-reset {
+            background: linear-gradient(90deg, #06b6d4, #2563eb);
+            display: none;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.75);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .score-num {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 15px 0;
+        }
+
+        /* Review Mode Classes */
+        .question-card.correct-card {
+            border-left-color: var(--correct-border);
+            background-color: var(--correct-bg);
+        }
+
+        .question-card.incorrect-card {
+            border-left-color: var(--incorrect-border);
+            background-color: var(--incorrect-bg);
+        }
+
+        .correct-opt {
+            font-weight: 700;
+            color: #15803d;
+            border-color: #86efac;
+        }
+
+        .user-wrong-opt {
+            text-decoration: line-through;
+            color: #b91c1c;
+            border-color: #fca5a5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>STPM Chemistry Semester 1</h1>
+            <p class="subtitle">Topics 1 – 3 Practice Quiz</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="tracker-bar">
+            <span id="question-tracker">Question 1 of 20</span>
+            <span id="answered-tracker">Answered: 0 / 20</span>
+        </div>
+
+        <div id="quiz-body">
+            <div class="question-card" id="q-card">
+                <div class="question-title" id="q-title">Loading Question...</div>
+                <div class="options-grid" id="q-options"></div>
+                <div class="solution-box" id="q-sol"></div>
+            </div>
+
+            <div class="nav-controls">
+                <button type="button" class="btn btn-secondary" id="prev-btn" onclick="prevQuestion()" disabled>Previous</button>
+                <button type="button" class="btn" id="next-btn" onclick="nextQuestion()">Next</button>
+                <button type="button" class="btn" id="submit-btn" onclick="checkAnswers()" style="display: none;">Check Answers</button>
+            </div>
+            
+            <button type="button" class="btn btn-reset" id="reset-btn" onclick="resetQuiz()">Retake Quiz</button>
+        </div>
+    </div>
+
+    <!-- Results Modal -->
+    <div class="modal" id="score-modal">
+        <div class="modal-content">
+            <h2>Quiz Results</h2>
+            <div class="score-num" id="modal-score">0%</div>
+            <p id="modal-feedback" style="margin-bottom: 22px; font-size: 1.1rem; color: #475569;"></p>
+            <button class="btn" onclick="closeModal()">Review Step-by-Step Solutions</button>
+        </div>
+    </div>
+
+    <script>
+        const originalQuestions = [
+            {
+                q: "A sample of 0.540 g of a diprotic acid H₂X requires 30.00 cm³ of 0.400 mol dm⁻³ NaOH solution for complete neutralisation. What is the relative molecular mass (Mᵣ) of the acid?",
+                opts: ["45.0", "90.0", "135.0", "180.0"],
+                ans: 1,
+                sol: "Neutralisation equation: H₂X + 2NaOH → Na₂X + 2H₂O.<br>Moles of NaOH = 0.400 × 0.0300 = 0.0120 mol.<br>Moles of H₂X = 0.0120 / 2 = 0.0060 mol.<br>Mᵣ = 0.540 g / 0.0060 mol = 90.0."
+            },
+            {
+                q: "Element Z consists of three naturally occurring isotopes: ²⁴Z (80.0%), ²⁵Z (10.0%), and ²⁶Z (10.0%). Calculate the relative atomic mass (Aᵣ) of Z.",
+                opts: ["24.0", "24.3", "24.5", "25.0"],
+                ans: 1,
+                sol: "Aᵣ = [(24 × 80.0) + (25 × 10.0) + (26 × 10.0)] / 100 = (1920 + 250 + 260) / 100 = 24.3."
+            },
+            {
+                q: "How many total atoms are present in 0.20 mol of dinitrogen tetroxide gas, N₂O₄? [Nₐ = 6.02 × 10²³ mol⁻¹]",
+                opts: ["1.20 × 10²³", "2.41 × 10²³", "7.22 × 10²³", "1.45 × 10²⁴"],
+                ans: 2,
+                sol: "1 molecule of N₂O₄ contains 2 + 4 = 6 atoms.<br>Total moles of atoms = 0.20 mol × 6 = 1.20 mol.<br>Total atoms = 1.20 × 6.02 × 10²³ = 7.22 × 10²³."
+            },
+            {
+                q: "When 5.00 g of phosphorus (P₄, Mᵣ = 124.0) reacts with 5.00 g of oxygen gas (O₂, Mᵣ = 32.0) to form P₄O₁₀ (Mᵣ = 284.0), which reactant is limiting?",
+                opts: ["P₄", "O₂", "Neither (exact ratio)", "P₄O₁₀"],
+                ans: 1,
+                sol: "Balanced equation: P₄ + 5O₂ → P₄O₁₀.<br>Moles P₄ = 5.00 / 124.0 = 0.0403 mol.<br>Moles O₂ = 5.00 / 32.0 = 0.1563 mol.<br>Required O₂ = 0.0403 × 5 = 0.2015 mol. Since available O₂ (0.1563 mol) < required O₂, O₂ is limiting."
+            },
+            {
+                q: "In a mass spectrometer, an organic molecule yields a molecular ion peak at m/z = 58 and a fragment ion peak at m/z = 43. What fragment is eliminated to produce m/z = 43?",
+                opts: ["CH₃⁺", "C₂H₅⁺", "•CH₃", "•OH"],
+                ans: 2,
+                sol: "Mass change = 58 - 43 = 15 u. A loss of 15 mass units corresponds to the cleavage and elimination of a neutral methyl radical (•CH₃)."
+            },
+            {
+                q: "What volume of 0.200 mol dm⁻³ H₂SO₄ is required to neutralize 50.0 cm³ of 0.400 mol dm⁻³ KOH?",
+                opts: ["25.0 cm³", "50.0 cm³", "75.0 cm³", "100.0 cm³"],
+                ans: 1,
+                sol: "H₂SO₄ + 2KOH → K₂SO₄ + 2H₂O.<br>Moles KOH = 0.400 × 0.0500 = 0.0200 mol.<br>Moles H₂SO₄ needed = 0.0100 mol.<br>Volume = 0.0100 / 0.200 = 0.0500 dm³ = 50.0 cm³."
+            },
+            {
+                q: "Calculate the energy emitted per photon when an electron in a hydrogen atom transitions from n=3 to n=1, given the frequency of the emitted light is 2.92 × 10¹⁵ s⁻¹. [h = 6.63 × 10⁻³⁴ J s]",
+                opts: ["1.94 × 10⁻¹⁸ J", "2.27 × 10⁻¹⁸ J", "4.41 × 10⁻¹⁹ J", "6.63 × 10⁻³⁴ J"],
+                ans: 0,
+                sol: "Using E = hν: E = (6.63 × 10⁻³⁴ J s) × (2.92 × 10¹⁵ s⁻¹) = 1.936 × 10⁻¹⁸ J."
+            },
+            {
+                q: "Which set of quantum numbers (n, l, mₗ, mₛ) represents an electron in a 3d orbital?",
+                opts: ["(3, 1, 0, +1/2)", "(3, 2, -1, -1/2)", "(3, 3, +1, +1/2)", "(4, 2, +2, -1/2)"],
+                ans: 1,
+                sol: "For a 3d orbital: principal quantum number n = 3, azimuthal quantum number l = 2 (s=0, p=1, d=2). Magnetic quantum number mₗ ranges from -2 to +2."
+            },
+            {
+                q: "What is the correct ground-state electronic configuration of a copper atom (Cu, Z = 29)?",
+                opts: ["[Ar] 4s² 3d⁹", "[Ar] 4s¹ 3d¹⁰", "[Ar] 4s⁰ 3d¹⁰ 4p¹", "[Ar] 3d¹¹"],
+                ans: 1,
+                sol: "Copper is an exception to the Aufbau principle due to the enhanced stability of a fully filled d-subshell (3d¹⁰). Its configuration is [Ar] 4s¹ 3d¹⁰."
+            },
+            {
+                q: "The convergence limit of the Lyman series for hydrogen occurs at a frequency of 3.28 × 10¹⁵ s⁻¹. What is the first ionisation energy of hydrogen in kJ mol⁻¹? [h = 6.63 × 10⁻³⁴ J s, Nₐ = 6.02 × 10²³ mol⁻¹]",
+                opts: ["1310 kJ mol⁻¹", "2180 kJ mol⁻¹", "13100 kJ mol⁻¹", "2.18 × 10⁻¹⁸ kJ mol⁻¹"],
+                ans: 0,
+                sol: "E = hν = 6.63 × 10⁻³⁴ × 3.28 × 10¹⁵ = 2.175 × 10⁻¹⁸ J/atom.<br>Per mole: E = 2.175 × 10⁻¹⁸ × 6.02 × 10²³ = 1.309 × 10⁶ J mol⁻¹ = 1310 kJ mol⁻¹."
+            },
+            {
+                q: "The total number of degenerate p orbitals in any main energy level with n ≥ 2 is:",
+                opts: ["1", "3", "5", "7"],
+                ans: 1,
+                sol: "Every p-subshell contains 3 degenerate (pₓ, pᵧ, p_z) orbitals having equal energy."
+            },
+            {
+                q: "Which element has a pseudo-noble gas electronic configuration in its +1 oxidation state?",
+                opts: ["Na (Z=11)", "K (Z=19)", "Cu (Z=29)", "Sc (Z=21)"],
+                ans: 2,
+                sol: "Cu⁺ has the configuration [Ar] 3d¹⁰ (18 + 10 = 28 electrons). A full outer d¹⁰ shell outside a noble gas core is termed a pseudo-noble gas configuration."
+            },
+            {
+                q: "What is the formal charge on the central nitrogen atom in the nitrate ion, NO₃⁻?",
+                opts: ["0", "+1", "-1", "+2"],
+                ans: 1,
+                sol: "Formal charge = V - N - B/2. For central N in NO₃⁻: V=5, N=0, B=8 (4 bonds). FC = 5 - 0 - 4 = +1."
+            },
+            {
+                q: "Which molecule or ion possesses a square planar geometry according to VSEPR theory?",
+                opts: ["NH₄⁺", "SF₄", "XeF₄", "CCl₄"],
+                ans: 2,
+                sol: "XeF₄ has 4 bonding pairs and 2 lone pairs on the central Xe atom (total 6 electron pairs). The lone pairs locate opposite each other, resulting in a square planar molecular shape."
+            },
+            {
+                q: "Determine the hybridisation of the central iodine atom in I₃⁻ (triiodide ion).",
+                opts: ["sp²", "sp³", "sp³d", "sp³d²"],
+                ans: 2,
+                sol: "Central I in I₃⁻ has 2 bonding pairs and 3 lone pairs (total 5 valence electron pairs). This corresponds to trigonal bipyramidal domain geometry and sp³d hybridisation."
+            },
+            {
+                q: "How many σ (sigma) and π (pi) bonds are present in a molecule of hydrogen cyanide, HCN?",
+                opts: ["1 σ, 2 π", "2 σ, 2 π", "3 σ, 1 π", "2 σ, 1 π"],
+                ans: 1,
+                sol: "Lewis structure: H-C≡N. Single H-C bond = 1 σ. Triple C≡N bond = 1 σ + 2 π. Total: 2 σ and 2 π bonds."
+            },
+            {
+                q: "Which of the following compounds exhibits coordinate covalent (dative) bonding?",
+                opts: ["CH₄", "NH₄⁺", "H₂O", "CO₂"],
+                ans: 1,
+                sol: "In NH₄⁺, the lone pair on the NH₃ nitrogen atom is donated to an electron-deficient H⁺ ion, forming a coordinate covalent bond."
+            },
+            {
+                q: "Which factor increases the strength of metallic bonding in main group metals?",
+                opts: ["Larger ionic radius and fewer valence electrons", "Smaller ionic radius and more delocalised valence electrons", "Larger atomic mass", "Lower electronegativity"],
+                ans: 1,
+                sol: "Metallic bond strength is directly proportional to charge density of metal cations (higher charge, smaller radius) and number of delocalised electrons."
+            },
+            {
+                q: "Which substance features intramolecular hydrogen bonding?",
+                opts: ["Water, H₂O", "Ethanol, C₂H₅OH", "2-nitrophenol", "4-nitrophenol"],
+                ans: 2,
+                sol: "In 2-nitrophenol (ortho-nitrophenol), the -OH group and -NO₂ group are adjacent, allowing a hydrogen bond to form internally within the molecule."
+            },
+            {
+                q: "Why is nitrogen gas (N₂) chemically inert at room temperature?",
+                opts: ["It is a non-polar molecule", "It has a very high bond energy due to a triple bond", "It has low electronegativity", "It lacks lone pairs of electrons"],
+                ans: 1,
+                sol: "The triple bond (N≡N) in nitrogen has an exceptionally high bond energy (945 kJ mol⁻¹), requiring high energy input to break before reaction occurs."
+            }
+        ];
+
+        let activeQuestions = [];
+        let userAnswers = {};
+        let currentIndex = 0;
+        let isReviewed = false;
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function initQuiz() {
+            currentIndex = 0;
+            userAnswers = {};
+            isReviewed = false;
+            
+            // Deep copy and shuffle questions
+            activeQuestions = JSON.parse(JSON.stringify(originalQuestions));
+            shuffle(activeQuestions);
+
+            // Shuffle options for each question
+            activeQuestions.forEach(q => {
+                let optionsWithIndices = q.opts.map((opt, idx) => ({ text: opt, isCorrect: idx === q.ans }));
+                shuffle(optionsWithIndices);
+                q.opts = optionsWithIndices.map(o => o.text);
+                q.ans = optionsWithIndices.findIndex(o => o.isCorrect);
+            });
+
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('reset-btn').style.display = 'none';
+
+            loadQuestion(0);
+        }
+
+        function loadQuestion(index) {
+            currentIndex = index;
+            const q = activeQuestions[index];
+
+            // Update Trackers
+            document.getElementById('question-tracker').innerText = `Question ${index + 1} of ${activeQuestions.length}`;
+            const progressPercent = ((index + 1) / activeQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            // Update Card Elements
+            document.getElementById('q-title').innerText = `${index + 1}. ${q.q}`;
+            
+            const card = document.getElementById('q-card');
+            card.className = 'question-card';
+
+            const solBox = document.getElementById('q-sol');
+            solBox.style.display = isReviewed ? 'block' : 'none';
+            solBox.innerHTML = `<strong>Step-by-Step Solution:</strong><br>${q.sol}`;
+
+            // Render Options
+            const optionsContainer = document.getElementById('q-options');
+            let optionsHTML = '';
+
+            q.opts.forEach((opt, oIdx) => {
+                const isChecked = userAnswers[index] === oIdx ? 'checked' : '';
+                let extraClass = '';
+
+                if (isReviewed) {
+                    if (oIdx === q.ans) extraClass += ' correct-opt';
+                    if (userAnswers[index] === oIdx && userAnswers[index] !== q.ans) extraClass += ' user-wrong-opt';
+                }
+
+                optionsHTML += `
+                    <label class="option-label ${extraClass}" id="label-${oIdx}">
+                        <input type="radio" name="current-option" value="${oIdx}" ${isChecked} ${isReviewed ? 'disabled' : ''} onchange="saveAnswer(${oIdx})">
+                        <span>${opt}</span>
+                    </label>
+                `;
+            });
+
+            optionsContainer.innerHTML = optionsHTML;
+
+            if (isReviewed) {
+                if (userAnswers[index] === q.ans) {
+                    card.classList.add('correct-card');
+                } else {
+                    card.classList.add('incorrect-card');
+                }
+            }
+
+            // Update Nav Buttons
+            document.getElementById('prev-btn').disabled = index === 0;
+
+            if (index === activeQuestions.length - 1) {
+                document.getElementById('next-btn').style.display = 'none';
+                if (!isReviewed) {
+                    document.getElementById('submit-btn').style.display = 'block';
+                }
+            } else {
+                document.getElementById('next-btn').style.display = 'block';
+                document.getElementById('submit-btn').style.display = 'none';
+            }
+
+            // Safely attempt KaTeX rendering
+            try {
+                if (typeof renderMathInElement === 'function') {
+                    renderMathInElement(document.getElementById('q-card'), {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }
+            } catch(e) {
+                console.log("KaTeX rendering skipped:", e);
+            }
+
+            updateAnsweredTracker();
+        }
+
+        function saveAnswer(optionIndex) {
+            userAnswers[currentIndex] = optionIndex;
+            updateAnsweredTracker();
+        }
+
+        function updateAnsweredTracker() {
+            const count = Object.keys(userAnswers).length;
+            document.getElementById('answered-tracker').innerText = `Answered: ${count} / ${activeQuestions.length}`;
+        }
+
+        function nextQuestion() {
+            if (currentIndex < activeQuestions.length - 1) {
+                loadQuestion(currentIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                loadQuestion(currentIndex - 1);
+            }
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            const total = activeQuestions.length;
+
+            activeQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.ans) {
+                    score++;
+                }
+            });
+
+            const percentage = Math.round((score / total) * 100);
+            
+            document.getElementById('modal-score').innerText = `${percentage}%`;
+            document.getElementById('modal-feedback').innerText = `You scored ${score} out of ${total} marks.`;
+            document.getElementById('score-modal').style.display = 'flex';
+
+            if (percentage > 70 && typeof confetti === 'function') {
+                triggerConfetti();
+            }
+
+            isReviewed = true;
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('reset-btn').style.display = 'block';
+        }
+
+        function triggerConfetti() {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 } };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55, colors: ['#2563eb', '#7c3aed'] });
+            fire(0.2, { spread: 60, colors: ['#06b6d4', '#3b82f6'] });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, colors: ['#a855f7', '#38bdf8'] });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
+
+        function closeModal() {
+            document.getElementById('score-modal').style.display = 'none';
+            loadQuestion(0);
+        }
+
+        function resetQuiz() {
+            initQuiz();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            initQuiz();
+        });
+    </script>
+</body>
+</html>
